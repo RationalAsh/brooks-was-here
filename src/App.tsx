@@ -11,6 +11,7 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import React, { FC, ReactNode, useMemo } from 'react';
+import MarkMaker from './components/MarkMaker';
 import NavigationBar from './components/NavigationBar'
 
 require('./App.css');
@@ -63,6 +64,7 @@ const Content: FC = () => {
     return (
         <>
             <NavigationBar />
+            <MarkMaker />
         </>
     );
 };
