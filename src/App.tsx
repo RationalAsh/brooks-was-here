@@ -12,6 +12,7 @@ import {
 import { clusterApiUrl } from '@solana/web3.js';
 import React, { FC, ReactNode, useMemo } from 'react';
 import MarkMaker from './components/MarkMaker';
+import { MetaplexProvider } from './components/MetaplexProvider';
 import NavigationBar from './components/NavigationBar'
 
 require('./App.css');
@@ -56,7 +57,11 @@ const Context: FC<{ children: ReactNode }> = ({ children }) => {
     return (
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>{children}</WalletModalProvider>
+                <WalletModalProvider>
+                    <MetaplexProvider>
+                    {children}
+                    </MetaplexProvider>
+                </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>
     );
