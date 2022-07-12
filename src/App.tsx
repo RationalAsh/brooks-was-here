@@ -28,9 +28,11 @@ export default App;
 
 const Context: FC<{ children: ReactNode }> = ({ children }) => {
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-    const network = WalletAdapterNetwork.Devnet;
+    // const network = WalletAdapterNetwork.Devnet;
+    const network = WalletAdapterNetwork.Testnet;
 
     // You can also provide a custom RPC endpoint.
+    // const endpoint = "http://localhost:8899";
     const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
     // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
