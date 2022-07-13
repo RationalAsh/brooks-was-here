@@ -7,7 +7,7 @@ interface INavigationBarProps {
 
 const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="dark" expand="lg" variant="dark">
         <Container>
             <Navbar.Brand href="#home">Brooks Was Here</Navbar.Brand>
             <WalletMultiButton />
