@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap'
+import React, { useRef, useState } from 'react'
+import { Button, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -15,19 +15,46 @@ export interface NFTData {
 
 }
 
+function ToastMessage(message: string) {
+    return (
+        <ToastContainer className="p-3" position='bottom-center'>
+        <Toast delay={3000} autohide>
+        <Toast.Header>
+            <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
+            <strong className="me-auto">Bootstrap</strong>
+            <small>11 mins ago</small>
+        </Toast.Header>
+        <Toast.Body>message</Toast.Body>
+        </Toast>
+        </ToastContainer>
+    );
+}
+
 export default function MarkMaker({}: Props) {
     // Get the wallet adapter state hooks.
     const { connection } = useConnection();
     const { publicKey, sendTransaction, wallet } = useWallet();
     const [ nftMessage, setNFTMessage ] = useState("");
     const { metaplex } = useMetaplex();
+    const [isTextFocused, setIsTextFocused] = useState(false);
+    const [ isMinting, setIsMinting ] = useState(false)
+
+    const metaplexRef = useRef(metaplex);
 
 
     async function createNFT() {
-        const response = await metaplex.nfts().create({
-            uri: "https://mocki.io/v1/3a3975eb-0169-4e6f-8022-122d3657405b",
-            maxSupply: 1
-        });
+        if (metaplex) {
+            setIsMinting(true);
+            try {
+                const response = await metaplex.nfts().create({
+                    uri: "https://mocki.io/v1/3a3975eb-0169-4e6f-8022-122d3657405b",
+                    maxSupply: 1
+                });
+                setIsMinting(false);
+            } catch (error) {
+                setIsMinting(false);
+            }
+        }
     }
 
 
@@ -35,20 +62,35 @@ export default function MarkMaker({}: Props) {
         setNFTMessage(event.target.value);
     }
 
+    function onFocusOut(event: any) {
+        setIsTextFocused(false);
+    }
+
+    function onFocusIn(event: any) {
+        setIsTextFocused(true);
+    }
+
     return (
-    <Container fluid="sm" className="px-2 py-2">
-        <Form as={Row} className="mb-3">
-            <Col sm={9}>
-            <Form.Control className="shadow" 
-                          size="lg" type="text" 
-                          placeholder="So was Red"
-                          onChange={handleMessageChange} />
-            </Col>
-            <Col sm={2}>
-            <Button variant="primary" size="lg" className="shadow" onClick={createNFT}>
-                Mint!
-            </Button>
-            </Col>
+    <Container className="container-xs px-2 py-2">
+        <Form>
+            <Row className="justify-content-md-center">
+                <Col xs lg="2">
+                    <Form.Control className={isTextFocused ? "shadow-lg" : "shadow" }
+                                size="lg" type="text" 
+                                placeholder="So was Red"
+                                onChange={handleMessageChange} 
+                                onBlur={onFocusOut} 
+                                onFocus={onFocusIn}
+                                readOnly={isMinting}/>
+                    </Col>
+                <Col xs lg="2">
+                    <Button variant="primary" size="lg" 
+                            className={ isTextFocused ? "shadow-lg" : "shadow" }
+                            onClick={createNFT}>
+                        Mint!
+                    </Button>
+                </Col>
+            </Row>
         </Form>
     </Container>
     )
