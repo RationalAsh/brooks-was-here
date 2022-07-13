@@ -35,7 +35,7 @@ export default function MarkMaker({}: Props) {
     const { connection } = useConnection();
     const { publicKey, sendTransaction, wallet } = useWallet();
     const [ nftMessage, setNFTMessage ] = useState("");
-    const { metaplex } = useMetaplex();
+    const { metaplex } = useMetaplex() as any;
     const [isTextFocused, setIsTextFocused] = useState(false);
     const [ isMinting, setIsMinting ] = useState(false)
 
