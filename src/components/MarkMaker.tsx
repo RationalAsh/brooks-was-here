@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react'
 import { Button, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FC, useCallback } from 'react';
 import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
-import { createInitializeMintInstruction, createMint, getMinimumBalanceForRentExemptAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { createInitializeMintInstruction, createMint, createTransferInstruction, getMinimumBalanceForRentExemptAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { setMaxListeners } from 'stream';
 import { useMetaplex } from './useMetaplex';
 
@@ -38,23 +38,49 @@ export default function MarkMaker({}: Props) {
     const { metaplex } = useMetaplex() as any;
     const [isTextFocused, setIsTextFocused] = useState(false);
     const [ isMinting, setIsMinting ] = useState(false)
+    const holdingWallet = new PublicKey("FPbFEuHuM1jELoD8JfZ9nUAisk33V8ZrrZ5Tv4zmJTKY")
 
     const metaplexRef = useRef(metaplex);
 
+    const creatorList = []
 
+    // Function to mint the NFT.
     async function createNFT() {
         if (metaplex) {
             setIsMinting(true);
             try {
                 const response = await metaplex.nfts().create({
-                    uri: "https://mocki.io/v1/3a3975eb-0169-4e6f-8022-122d3657405b",
-                    maxSupply: 1
+                    // uri: "https://mocki.io/v1/3a3975eb-0169-4e6f-8022-122d3657405b",
+                    uri: "https://us-central1-fig-leaf-capital.cloudfunctions.net/nft-metadata-function",
+                    name: "Brooks Was Here #",
+                    symbol: "BWH",
                 });
                 setIsMinting(false);
             } catch (error) {
+                console.log(error);
                 setIsMinting(false);
             }
         }
+    }
+
+    // Function to transfer NFT to the account from which the messages are displayed.
+    async function transferNFT() {
+        if (publicKey) {
+            const transaction = new Transaction().add(
+                createTransferInstruction(
+                    publicKey,
+                    holdingWallet,
+                    publicKey,
+                    1
+                )
+            )
+        }
+    }
+
+    // Function to get all NFTs in account
+    async function getRelevantNFTs() {
+        const response = await metaplex.nfts().findAllByOwner(holdingWallet);
+        console.log(response.filter((item:any) => item.symbol === "BWH"));
     }
 
 
@@ -70,25 +96,41 @@ export default function MarkMaker({}: Props) {
         setIsTextFocused(true);
     }
 
+    // Component to display a line of the NFT.
+
     return (
     <Container className="container-xs px-2 py-2">
         <Form>
+            {/* Place to enter message and mint your own NFT */}
             <Row className="justify-content-md-center">
                 <Col xs lg="2">
-                    <Form.Control className={isTextFocused ? "shadow-lg" : "shadow" }
-                                size="lg" type="text" 
-                                placeholder="So was Red"
-                                onChange={handleMessageChange} 
-                                onBlur={onFocusOut} 
-                                onFocus={onFocusIn}
-                                readOnly={isMinting}/>
-                    </Col>
+                    <Form.Control className={ isTextFocused ? "shadow-lg" : "shadow" }
+                                  size="lg" type="text" 
+                                  placeholder="So was Red"
+                                  onChange={ handleMessageChange } 
+                                  onBlur={ onFocusOut } 
+                                  onFocus={ onFocusIn }
+                                  readOnly={ isMinting }/>
+                </Col>
                 <Col xs lg="2">
                     <Button variant="primary" size="lg" 
                             className={ isTextFocused ? "shadow-lg" : "shadow" }
                             onClick={createNFT}>
                         Mint!
                     </Button>
+                </Col>
+                <Col xs lg="2">
+                    <Button variant="primary" size="lg" 
+                            className={ isTextFocused ? "shadow-lg" : "shadow" }
+                            onClick={getRelevantNFTs}>
+                        Message!
+                    </Button>
+                </Col>
+            </Row>
+            {/* Place to display the messages that have been submitted so far. */}
+            <Row className="justify-content-xs-center py-3">
+                <Col xs lg="2" className='"justify-content-md-center"'>
+                    <h1>So was Red.</h1>
                 </Col>
             </Row>
         </Form>
