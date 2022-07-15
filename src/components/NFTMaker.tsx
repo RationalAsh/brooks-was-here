@@ -129,7 +129,7 @@ export default function NFTMaker({}: Props) {
 
     return (
     <>
-    <Container className="container-xs px-2 py-2">
+    <Container className="container-xs px-2 py-3">
         <Form>
             {/* Place to enter message and mint your own NFT */}
             <Row className="justify-content-md-center">
@@ -168,64 +168,3 @@ export default function NFTMaker({}: Props) {
     </>
     )
 }
-
-    // // Function to mint the NFT. 
-    // // Since the wallet adapter does not work nicely with metaplex and spl-token yet, 
-    // // we manually combine the code from both the libraries:
-    // // https://github.com/solana-labs/solana-program-library/blob/48fbb5b7/token/js/src/actions/createMint.ts#L29
-    // // https://github.com/solana-labs/solana-web3.js/blob/e3dc440/src/util/send-and-confirm-transaction.ts#L18
-    // // https://github.com/longmengua/solana-frontend/blob/9231643fa85ff115404ad37f07453a3d47e160a1/solana/module/components/index/index.tsx
-    // // https://stackoverflow.com/questions/70224185/how-to-transfer-custom-spl-token-by-solana-web3-js-and-solana-sol-wallet-ad
-    // // https://solanacookbook.com/references/nfts.html#how-to-create-an-nft
-    // async function mintNFT() {
-    //     // Setup the function parameters to mint an NFT.
-    //     const programId = TOKEN_PROGRAM_ID;
-    //     const keypair = Keypair.generate();
-    //     const freezeAuthority = null;
-    //     const decimals = 9; // Since we're making an NFT, the decimals are zero.
-    //     const lamports = await getMinimumBalanceForRentExemptAccount(connection);
-    //     // const lamports = 0.01*LAMPORTS_PER_SOL;
-
-    //     console.log(lamports);
-        
-    //     try {
-    //         if (!publicKey) {
-    //         } else {
-    
-    //             // Set up the transaction to mint a new NFT.
-    //             const transaction = new Transaction().add(
-    //                 SystemProgram.createAccount({
-    //                     fromPubkey: publicKey,
-    //                     newAccountPubkey: keypair.publicKey,
-    //                     space: MINT_SIZE,
-    //                     lamports,
-    //                     programId,
-    //                 }),
-    //                 createInitializeMintInstruction(
-    //                     keypair.publicKey, 
-    //                     decimals, 
-    //                     publicKey, 
-    //                     publicKey, 
-    //                     programId
-    //                 )
-    //             );
-                
-    //             // Send the transaction
-    //             const signature = await sendTransaction(transaction, connection, {signers: [keypair]});
-    
-    //             // Get the latest block hash
-    //             const latestBlockHash = await connection.getLatestBlockhash();
-    
-    //             // Use this to confirm the transaction
-    //             await connection.confirmTransaction(
-    //                 { blockhash: latestBlockHash.blockhash,
-    //                   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-    //                   signature: signature
-    //                 }
-    //             );
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
