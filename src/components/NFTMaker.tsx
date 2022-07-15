@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Card, CardGroup, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
+import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -158,9 +158,9 @@ export default function NFTMaker({}: Props) {
             <Col><h1>Your Mints</h1></Col>
         </Row>
         <Row className="px-1 py-3">
-            <CardGroup>
+            <CardGroup className='justify-content-md-center'>
             { walletNFTMetaData.length === 0 ?
-                null:
+                (!publicKey ? "Connect a wallet to see your mints." : <Spinner animation="border"/>) :
                 walletNFTMetaData.map((nftItem, idx) => <NFTCardItem key={idx} props={nftItem}/>) }
             </CardGroup>
         </Row>
