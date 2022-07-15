@@ -16,32 +16,18 @@ export interface NFTData {
 
 }
 
-function ToastMessage(message: string) {
-    return (
-        <ToastContainer className="p-3" position='bottom-center'>
-        <Toast delay={3000} autohide>
-        <Toast.Header>
-            <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
-            <strong className="me-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
-        </Toast.Header>
-        <Toast.Body>message</Toast.Body>
-        </Toast>
-        </ToastContainer>
-    );
-}
-
 export default function NFTMaker({}: Props) {
     // Get the wallet adapter state hooks.
     const { connection } = useConnection();
     const { publicKey, sendTransaction, wallet } = useWallet();
-    const [ nftMessage, setNFTMessage ] = useState("");
+    const [ nftMessage, setNFTMessage ] = useState<string>("");
     const { metaplex } = useMetaplex() as any;
     const [isTextFocused, setIsTextFocused] = useState(false);
     const [ isMinting, setIsMinting ] = useState(false);
     const holdingWallet = new PublicKey("4Xqz6w6rLuzFrPUMo63HaRMaKgSjtGs7VsWh81XfJKqV");
     const [walletNFTs, setWalletNFTs] = useState<Nft[]>([]);
     const [walletNFTMetaData, setWalletNFTMetadata] = useState<any[]>([])
+    const [validated, setValidated] = useState(false);
 
     const metaplexRef = useRef(metaplex);
 
@@ -130,22 +116,24 @@ export default function NFTMaker({}: Props) {
     return (
     <>
     <Container className="container-xs px-2 py-3">
-        <Form>
+        <Form validated={validated}>
             {/* Place to enter message and mint your own NFT */}
             <Row className="justify-content-md-center">
                 <Col xs lg="6">
                     <Form.Control className={ isTextFocused ? "shadow-lg" : "shadow" }
                                   size="lg" type="text" 
-                                  placeholder="So was Red"
+                                  placeholder="Name your NFT."
                                   onChange={ handleMessageChange } 
                                   onBlur={ onFocusOut } 
                                   onFocus={ onFocusIn }
-                                  readOnly={ isMinting }/>
+                                  readOnly={ isMinting }
+                                  required/>
                 </Col>
                 <Col xs lg="2">
                     <Button variant="primary" size="lg" 
                             className={ isTextFocused ? "shadow-lg" : "shadow" }
-                            onClick={createNFT}>
+                            onClick={createNFT}
+                            disabled={nftMessage.length === 0}>
                         Mint!
                     </Button>
                 </Col>
@@ -163,6 +151,20 @@ export default function NFTMaker({}: Props) {
                 (!publicKey ? "Connect a wallet to see your mints." : <Spinner animation="border"/>) :
                 walletNFTMetaData.map((nftItem, idx) => <NFTCardItem key={idx} props={nftItem}/>) }
             </CardGroup>
+        </Row>
+        <Row>
+        <Toast show={isMinting} animation={false}>
+          <Toast.Header>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded me-2"
+              alt=""
+            />
+            <strong className="me-auto">Bootstrap</strong>
+            <small>11 mins ago</small>
+          </Toast.Header>
+          <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+        </Toast>
         </Row>
     </Container>
     </>
