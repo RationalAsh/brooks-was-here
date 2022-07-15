@@ -1,14 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { useEffect, useRef, useState } from 'react'
+import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast } from 'react-bootstrap'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { FC, useCallback } from 'react';
-import { Metaplex, keypairIdentity, Nft } from "@metaplex-foundation/js";
-import { createInitializeMintInstruction, createMint, createTransferInstruction, getMinimumBalanceForRentExemptAccount, getOrCreateAssociatedTokenAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { setMaxListeners } from 'stream';
+import { PublicKey } from '@solana/web3.js';
+import { Nft } from "@metaplex-foundation/js";
 import { useMetaplex } from './useMetaplex';
-import { execPath } from 'process';
 
 type Props = {}
 
@@ -51,7 +46,7 @@ export default function NFTMaker({}: Props) {
                 console.log(err);
             });
 
-    }, [isMinting, publicKey])
+    }, [isMinting, publicKey, metaplex])
 
     // Function to mint the NFT.
     async function createNFT() {
