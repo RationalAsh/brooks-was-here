@@ -90,8 +90,7 @@ export default function NFTMaker({}: Props) {
     const NFTCardItem = ({props} : {props: any}) => {
         if (props) {
             return (
-                <Col className="justify-content-md-center">
-                <Card className="shadow">
+                <Card className="shadow col-sm-6">
                     <Card.Img variant="top" src={props.external_url ? props.external_url : ""}/>
                     <Card.Body>
                         <Card.Title>{props.name ? props.name : "No Name"}</Card.Title>
@@ -101,7 +100,6 @@ export default function NFTMaker({}: Props) {
                         <Button variant="primary">Go somewhere</Button>
                     </Card.Body>
                 </Card>
-                </Col>
             )
         } else {
             return null
