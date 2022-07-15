@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Card, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
+import { Button, Card, CardGroup, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FC, useCallback } from 'react';
-import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
+import { Metaplex, keypairIdentity, Nft } from "@metaplex-foundation/js";
 import { createInitializeMintInstruction, createMint, createTransferInstruction, getMinimumBalanceForRentExemptAccount, getOrCreateAssociatedTokenAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { setMaxListeners } from 'stream';
 import { useMetaplex } from './useMetaplex';
@@ -40,7 +40,8 @@ export default function NFTMaker({}: Props) {
     const [isTextFocused, setIsTextFocused] = useState(false);
     const [ isMinting, setIsMinting ] = useState(false);
     const holdingWallet = new PublicKey("4Xqz6w6rLuzFrPUMo63HaRMaKgSjtGs7VsWh81XfJKqV");
-    const [walletNFTs, setWalletNFTs] = useState([]);
+    const [walletNFTs, setWalletNFTs] = useState<Nft[]>([]);
+    const [walletNFTMetaData, setWalletNFTMetadata] = useState<any[]>([])
 
     const metaplexRef = useRef(metaplex);
 
@@ -48,20 +49,23 @@ export default function NFTMaker({}: Props) {
 
     useEffect(() => {
         const fetchNFTs = async () => {
-            const nftdata = await metaplex.nfts().findAllByOwner(holdingWallet);
+            const nftdata: Nft[] = await metaplex.nfts().findAllByOwner(publicKey);
+            const metadatalst = await Promise.all(nftdata.map(async (item) => await (await fetch(item.uri)).json() ));
             console.log(nftdata);
             setWalletNFTs(nftdata);
+            setWalletNFTMetadata(metadatalst);
         }
 
         fetchNFTs()
             .then(res => {
                 console.log(walletNFTs);
+                console.log(walletNFTMetaData);
             })
             .catch(err => {
                 console.log(err);
             });
 
-    }, [isMinting])
+    }, [isMinting, publicKey])
 
     // Function to mint the NFT.
     async function createNFT() {
@@ -102,6 +106,26 @@ export default function NFTMaker({}: Props) {
     }
 
     // Component to display a line of the NFT.
+    const NFTCardItem = ({props} : {props: any}) => {
+        if (props) {
+            return (
+                <Col className="justify-content-md-center">
+                <Card className="shadow">
+                    <Card.Img variant="top" src={props.external_url ? props.external_url : ""}/>
+                    <Card.Body>
+                        <Card.Title>{props.name ? props.name : "No Name"}</Card.Title>
+                        <Card.Text>
+                        {props.description ? props.description : "No descrption"}
+                        </Card.Text>
+                        <Button variant="primary">Go somewhere</Button>
+                    </Card.Body>
+                </Card>
+                </Col>
+            )
+        } else {
+            return null
+        }
+    }
 
     return (
     <>
@@ -109,7 +133,7 @@ export default function NFTMaker({}: Props) {
         <Form>
             {/* Place to enter message and mint your own NFT */}
             <Row className="justify-content-md-center">
-                <Col xs lg="8">
+                <Col xs lg="6">
                     <Form.Control className={ isTextFocused ? "shadow-lg" : "shadow" }
                                   size="lg" type="text" 
                                   placeholder="So was Red"
@@ -126,24 +150,19 @@ export default function NFTMaker({}: Props) {
                     </Button>
                 </Col>
             </Row>
-            {/* Place to display the messages that have been submitted so far. */}
         </Form>
     </Container>
-    <Container>
-        <Row className="px-2 py-3">
-            <Col>
-                <Card style={{ width: '18rem' }} className="shadow">
-                <Card.Img variant="top" src="holder.js/100px180" />
-                <Card.Body>
-                    <Card.Title>Card Title</Card.Title>
-                    <Card.Text>
-                    Some quick example text to build on the card title and make up the
-                    bulk of the card's content.
-                    </Card.Text>
-                    <Button variant="primary">Go somewhere</Button>
-                </Card.Body>
-                </Card>
-            </Col>
+    {/* Place to display the messages that have been submitted so far. */}
+    <Container fluid="md">
+        <Row className="px-2 py-4 text-center">
+            <Col><h1>Your Mints</h1></Col>
+        </Row>
+        <Row className="px-1 py-3">
+            <CardGroup>
+            { walletNFTMetaData.length === 0 ?
+                null:
+                walletNFTMetaData.map((nftItem, idx) => <NFTCardItem key={idx} props={nftItem}/>) }
+            </CardGroup>
         </Row>
     </Container>
     </>
