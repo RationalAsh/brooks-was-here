@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react'
-import { Button, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, Card, Col, Container, Form, Row, Toast, ToastContainer } from 'react-bootstrap'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram, Transaction, ConfirmOptions, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { FC, useCallback } from 'react';
 import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
-import { createInitializeMintInstruction, createMint, createTransferInstruction, getMinimumBalanceForRentExemptAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { createInitializeMintInstruction, createMint, createTransferInstruction, getMinimumBalanceForRentExemptAccount, getOrCreateAssociatedTokenAccount, MINT_SIZE, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { setMaxListeners } from 'stream';
 import { useMetaplex } from './useMetaplex';
+import { execPath } from 'process';
 
 type Props = {}
 
@@ -30,29 +31,46 @@ function ToastMessage(message: string) {
     );
 }
 
-export default function MarkMaker({}: Props) {
+export default function NFTMaker({}: Props) {
     // Get the wallet adapter state hooks.
     const { connection } = useConnection();
     const { publicKey, sendTransaction, wallet } = useWallet();
     const [ nftMessage, setNFTMessage ] = useState("");
     const { metaplex } = useMetaplex() as any;
     const [isTextFocused, setIsTextFocused] = useState(false);
-    const [ isMinting, setIsMinting ] = useState(false)
-    const holdingWallet = new PublicKey("FPbFEuHuM1jELoD8JfZ9nUAisk33V8ZrrZ5Tv4zmJTKY")
+    const [ isMinting, setIsMinting ] = useState(false);
+    const holdingWallet = new PublicKey("4Xqz6w6rLuzFrPUMo63HaRMaKgSjtGs7VsWh81XfJKqV");
+    const [walletNFTs, setWalletNFTs] = useState([]);
 
     const metaplexRef = useRef(metaplex);
 
     const creatorList = []
 
+    useEffect(() => {
+        const fetchNFTs = async () => {
+            const nftdata = await metaplex.nfts().findAllByOwner(holdingWallet);
+            console.log(nftdata);
+            setWalletNFTs(nftdata);
+        }
+
+        fetchNFTs()
+            .then(res => {
+                console.log(walletNFTs);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+    }, [isMinting])
+
     // Function to mint the NFT.
     async function createNFT() {
-        if (metaplex) {
+        if (metaplex && publicKey) {
             setIsMinting(true);
             try {
+                console.log("https://us-central1-fig-leaf-capital.cloudfunctions.net/nft-metadata-function?" + (new URLSearchParams({name: nftMessage, creator: publicKey.toString()}).toString()))
                 const response = await metaplex.nfts().create({
-                    // uri: "https://mocki.io/v1/3a3975eb-0169-4e6f-8022-122d3657405b",
-                    uri: "https://us-central1-fig-leaf-capital.cloudfunctions.net/nft-metadata-function",
-                    name: "Brooks Was Here #",
+                    uri: "https://us-central1-fig-leaf-capital.cloudfunctions.net/nft-metadata-function?" + (new URLSearchParams({name: nftMessage, creator: publicKey.toString()}).toString()),
                     symbol: "BWH",
                 });
                 setIsMinting(false);
@@ -63,24 +81,11 @@ export default function MarkMaker({}: Props) {
         }
     }
 
-    // Function to transfer NFT to the account from which the messages are displayed.
-    async function transferNFT() {
-        if (publicKey) {
-            const transaction = new Transaction().add(
-                createTransferInstruction(
-                    publicKey,
-                    holdingWallet,
-                    publicKey,
-                    1
-                )
-            )
-        }
-    }
-
     // Function to get all NFTs in account
     async function getRelevantNFTs() {
         const response = await metaplex.nfts().findAllByOwner(holdingWallet);
         console.log(response.filter((item:any) => item.symbol === "BWH"));
+        return response
     }
 
 
@@ -99,11 +104,12 @@ export default function MarkMaker({}: Props) {
     // Component to display a line of the NFT.
 
     return (
+    <>
     <Container className="container-xs px-2 py-2">
         <Form>
             {/* Place to enter message and mint your own NFT */}
             <Row className="justify-content-md-center">
-                <Col xs lg="2">
+                <Col xs lg="8">
                     <Form.Control className={ isTextFocused ? "shadow-lg" : "shadow" }
                                   size="lg" type="text" 
                                   placeholder="So was Red"
@@ -119,22 +125,28 @@ export default function MarkMaker({}: Props) {
                         Mint!
                     </Button>
                 </Col>
-                <Col xs lg="2">
-                    <Button variant="primary" size="lg" 
-                            className={ isTextFocused ? "shadow-lg" : "shadow" }
-                            onClick={getRelevantNFTs}>
-                        Message!
-                    </Button>
-                </Col>
             </Row>
             {/* Place to display the messages that have been submitted so far. */}
-            <Row className="justify-content-xs-center py-3">
-                <Col xs lg="2" className='"justify-content-md-center"'>
-                    <h1>So was Red.</h1>
-                </Col>
-            </Row>
         </Form>
     </Container>
+    <Container>
+        <Row className="px-2 py-3">
+            <Col>
+                <Card style={{ width: '18rem' }} className="shadow">
+                <Card.Img variant="top" src="holder.js/100px180" />
+                <Card.Body>
+                    <Card.Title>Card Title</Card.Title>
+                    <Card.Text>
+                    Some quick example text to build on the card title and make up the
+                    bulk of the card's content.
+                    </Card.Text>
+                    <Button variant="primary">Go somewhere</Button>
+                </Card.Body>
+                </Card>
+            </Col>
+        </Row>
+    </Container>
+    </>
     )
 }
 

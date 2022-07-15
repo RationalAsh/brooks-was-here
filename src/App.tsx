@@ -11,7 +11,7 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import React, { FC, ReactNode, useMemo } from 'react';
-import MarkMaker from './components/MarkMaker';
+import NFTMaker from './components/NFTMaker';
 import { MetaplexProvider } from './components/MetaplexProvider';
 import NavigationBar from './components/NavigationBar'
 
@@ -71,7 +71,7 @@ const Content: FC = () => {
     return (
         <>
             <NavigationBar />
-            <MarkMaker />
+            <NFTMaker />
         </>
     );
 };
