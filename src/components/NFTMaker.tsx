@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast } from 'react-bootstrap'
+import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { Nft } from "@metaplex-foundation/js";
@@ -23,6 +23,8 @@ export default function NFTMaker({}: Props) {
     const [walletNFTs, setWalletNFTs] = useState<Nft[]>([]);
     const [walletNFTMetaData, setWalletNFTMetadata] = useState<any[]>([])
     const [validated, setValidated] = useState(false);
+    const [mintingToast, setMintingToast] = useState(false);
+    const [mintDoneToast, setMintDoneToast] = useState(false);
 
     const metaplexRef = useRef(metaplex);
 
@@ -52,6 +54,7 @@ export default function NFTMaker({}: Props) {
     async function createNFT() {
         if (metaplex && publicKey) {
             setIsMinting(true);
+            setMintingToast(true);
             try {
                 console.log("https://us-central1-fig-leaf-capital.cloudfunctions.net/nft-metadata-function?" + (new URLSearchParams({name: nftMessage, creator: publicKey.toString()}).toString()))
                 const response = await metaplex.nfts().create({
@@ -59,6 +62,8 @@ export default function NFTMaker({}: Props) {
                     symbol: "BWH",
                 });
                 setIsMinting(false);
+                setMintingToast(false);
+                setMintDoneToast(true);
             } catch (error) {
                 console.log(error);
                 setIsMinting(false);
@@ -90,7 +95,8 @@ export default function NFTMaker({}: Props) {
     const NFTCardItem = ({props} : {props: any}) => {
         if (props) {
             return (
-                <Card className="shadow col-sm-6">
+                <Col xs='12' md='6' lg='4'>
+                <Card className="shadow">
                     <Card.Img variant="top" src={props.external_url ? props.external_url : ""}/>
                     <Card.Body>
                         <Card.Title>{props.name ? props.name : "No Name"}</Card.Title>
@@ -100,6 +106,7 @@ export default function NFTMaker({}: Props) {
                         <Button variant="primary">Go somewhere</Button>
                     </Card.Body>
                 </Card>
+                </Col>
             )
         } else {
             return null
@@ -138,21 +145,30 @@ export default function NFTMaker({}: Props) {
         <Row className="px-2 py-4 text-center">
             <Col><h1>Your Mints</h1></Col>
         </Row>
-        <Row className="px-1 py-3">
-            <CardGroup className='justify-content-md-center'>
+        <Row className="px-1 py-3 justify-content-md-center">
+            {/* <CardGroup className='justify-content-md-center'> */}
             { walletNFTMetaData.length === 0 ?
                 (!publicKey ? "Connect a wallet to see your mints." : <Spinner animation="border"/>) :
                 walletNFTMetaData.map((nftItem, idx) => <NFTCardItem key={idx} props={nftItem}/>) }
-            </CardGroup>
+            {/* </CardGroup> */}
         </Row>
         <Row>
-        <Toast show={isMinting} animation={false}>
-          <Toast.Header>
-            <strong className="me-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
-          </Toast.Header>
-          <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
-        </Toast>
+        <ToastContainer position="bottom-end" className="p-3">
+            <Toast onClose={() => setMintingToast(false)} show={mintingToast} delay={3000} autohide={true}>
+                <Toast.Header>
+                <strong className="me-auto">Notification</strong>
+                <small className="text-muted">just now</small>
+                </Toast.Header>
+                <Toast.Body>Mint started!</Toast.Body>
+            </Toast>
+            <Toast onClose={() => setMintDoneToast(false)} show={mintDoneToast} delay={3000} autohide={true}>
+                <Toast.Header>
+                <strong className="me-auto">Notification</strong>
+                <small className="text-muted">just now</small>
+                </Toast.Header>
+                <Toast.Body>Mint Done!</Toast.Body>
+            </Toast>
+        </ToastContainer>
         </Row>
     </Container>
     </>
