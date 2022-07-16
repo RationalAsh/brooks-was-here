@@ -103,7 +103,11 @@ export default function NFTMaker({}: Props) {
                         <Card.Text>
                         {props.description ? props.description : "No descrption"}
                         </Card.Text>
-                        <Button variant="primary">Go somewhere</Button>
+                        <Button href={props.external_url ? props.external_url : ""}
+                                target="_blank" 
+                                variant="primary">
+                            Go to source
+                        </Button>
                     </Card.Body>
                 </Card>
                 </Col>
