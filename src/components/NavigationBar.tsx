@@ -13,7 +13,7 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
     <>
     <Navbar bg="dark" expand="lg" variant="dark">
         <Container>
-            <Navbar.Brand href="#home">Useless NFT Generator</Navbar.Brand>
+            <Navbar.Brand href="#home">Useless NFT Minter</Navbar.Brand>
             <Button variant="dark" onClick={() => {setShowAboutModal(true)}}>About</Button>
             <WalletMultiButton />
         </Container>
@@ -23,13 +23,19 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
             <Modal.Title>About</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <h4> What does this app do? </h4>
-            This is a React app that mints mostly useless NFTs on the Solana network. 
+            <p className='text-justify'>This is a React app that mints mostly useless NFTs on the Solana network. 
             I built this app to learn how to work with React and the Solana blockchain.
-            <h4> How do I use the app?</h4> 
-            Connect your phantom wallet and enter a name for your new NFT and click mint. 
-            The app will mint a new NFT with the name that you gave it. Currently, the name is the only thing you can 
-            customize about the NFT. Check back later for more features.
+            Find out more <a href='https://ashwinnarayan.com/' target='_blank'>about me on my website</a>.</p>
+
+            <h4> Minting Instructions </h4> 
+            <p className='text-justify'>Connect your phantom wallet and enter a name for your new NFT and click mint. The solana network sometimes 
+            has issues with throughput and minting might fail. If that happens, try minting again. Sometimes, the transaction
+            request times out but the minting might succeed later. If you get a message about transaction timeouts, please wait 
+            for a few minutes and reload the page or check your wallet to see if the NFT was minted.</p>
+
+            <h4>Can I customize the image / description / symbol / other metadata? </h4>
+            <p className='text-justify'>The app will mint a new NFT with the name you entered in the input form. The name is the only thing you can 
+            customize about the NFT right now. Check back later for more features!</p>
         </Modal.Body>
     </Modal>
     </>
