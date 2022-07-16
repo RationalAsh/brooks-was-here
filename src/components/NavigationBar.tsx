@@ -11,9 +11,18 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
 
   return (
     <>
-    <Navbar bg="dark" expand="lg" variant="dark">
+    <Navbar collapseOnSelect bg="dark" expand="md" variant="dark">
         <Container>
-            <Navbar.Brand href="#home">Useless NFT Minter</Navbar.Brand>
+            <Navbar.Brand href="/">
+              <img
+                src="/brand-logo.png"
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+                alt="React Bootstrap logo"
+              /> {' '}
+              Useless NFT Minter
+            </Navbar.Brand>
             <Button variant="dark" onClick={() => {setShowAboutModal(true)}}>About</Button>
             <WalletMultiButton />
         </Container>
@@ -28,14 +37,16 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
             Find out more <a href='https://ashwinnarayan.com/' target='_blank'>about me on my website</a>.</p>
 
             <h4> Minting Instructions </h4> 
-            <p className='text-justify'>Connect your phantom wallet and enter a name for your new NFT and click mint. The solana network sometimes 
+            <p className='text-justify'>Connect your phantom wallet, enter a name for your new NFT and click mint. The solana network sometimes 
             has issues with throughput and minting might fail. If that happens, try minting again. Sometimes, the transaction
-            request times out but the minting might succeed later. If you get a message about transaction timeouts, please wait 
-            for a few minutes and reload the page or check your wallet to see if the NFT was minted.</p>
+            times out and "fails". If this happens, please wait for a few minutes and reload the page or check your wallet to see if the NFT was minted.</p>
 
             <h4>Can I customize the image / description / symbol / other metadata? </h4>
             <p className='text-justify'>The app will mint a new NFT with the name you entered in the input form. The name is the only thing you can 
             customize about the NFT right now. Check back later for more features!</p>
+
+            <h4> Why are my existing NFTs not showing? </h4>
+            This app only shows NFTs that were minted here. 
         </Modal.Body>
     </Modal>
     </>
