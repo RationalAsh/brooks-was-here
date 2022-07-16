@@ -25,7 +25,8 @@ export default function NFTMaker({}: Props) {
     const [validated, setValidated] = useState(false);
     const [mintingToast, setMintingToast] = useState(false);
     const [mintDoneToast, setMintDoneToast] = useState(false);
-    const [showAboutModal, setShowAboutModal] = useState(false);
+    const [showMintFailed, setShowMintFailedModal] = useState(false);
+    
 
     const metaplexRef = useRef(metaplex);
 
@@ -68,6 +69,7 @@ export default function NFTMaker({}: Props) {
             } catch (error) {
                 console.log(error);
                 setIsMinting(false);
+                setShowMintFailedModal(true);
             }
         }
     }
@@ -159,19 +161,26 @@ export default function NFTMaker({}: Props) {
         </Row>
         <Row>
         <ToastContainer position="bottom-end" className="p-3">
-            <Toast onClose={() => setMintingToast(false)} show={mintingToast} delay={3000} autohide={true}>
+            <Toast onClose={() => setMintingToast(false)} show={mintingToast} delay={5000} autohide={true}>
                 <Toast.Header>
                 <strong className="me-auto">Notification</strong>
                 <small className="text-muted">just now</small>
                 </Toast.Header>
                 <Toast.Body>Mint started!</Toast.Body>
             </Toast>
-            <Toast onClose={() => setMintDoneToast(false)} show={mintDoneToast} delay={3000} autohide={true}>
+            <Toast bg="success" onClose={() => setMintDoneToast(false)} show={mintDoneToast} delay={5000} autohide={true}>
                 <Toast.Header>
                 <strong className="me-auto">Notification</strong>
                 <small className="text-muted">just now</small>
                 </Toast.Header>
                 <Toast.Body>Mint Done!</Toast.Body>
+            </Toast>
+            <Toast bg="danger" onClose={() => setShowMintFailedModal(false)} show={showMintFailed} delay={5000} autohide={true}>
+                <Toast.Header>
+                <strong className="me-auto">Notification</strong>
+                <small className="text-muted">just now</small>
+                </Toast.Header>
+                <Toast.Body>Mint failed! Please try again.</Toast.Body>
             </Toast>
         </ToastContainer>
         </Row>
