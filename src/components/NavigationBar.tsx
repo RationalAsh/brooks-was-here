@@ -22,7 +22,15 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
         <Modal.Header closeButton>
             <Modal.Title>About</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Information about this project.</Modal.Body>
+        <Modal.Body>
+            <h4> What does this app do? </h4>
+            This is a React app that mints mostly useless NFTs on the Solana network. 
+            I built this app to learn how to work with React and the Solana blockchain.
+            <h4> How do I use the app?</h4> 
+            Connect your phantom wallet and enter a name for your new NFT and click mint. 
+            The app will mint a new NFT with the name that you gave it. Currently, the name is the only thing you can 
+            customize about the NFT. Check back later for more features.
+        </Modal.Body>
     </Modal>
     </>
   );

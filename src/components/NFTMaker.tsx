@@ -98,7 +98,7 @@ export default function NFTMaker({}: Props) {
     const NFTCardItem = ({props} : {props: any}) => {
         if (props) {
             return (
-                <Col xs='12' md='6' lg='4'>
+                <Col xs='12' md='6' lg='4' className='py-3'>
                 <Card className="shadow">
                     <Card.Img variant="top" src={props.external_url ? props.external_url : ""}/>
                     <Card.Body>
