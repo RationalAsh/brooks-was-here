@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Card, CardGroup, Col, Container, Form, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
+import { Button, Card, CardGroup, Col, Container, Form, Modal, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { Nft } from "@metaplex-foundation/js";
@@ -25,6 +25,7 @@ export default function NFTMaker({}: Props) {
     const [validated, setValidated] = useState(false);
     const [mintingToast, setMintingToast] = useState(false);
     const [mintDoneToast, setMintDoneToast] = useState(false);
+    const [showAboutModal, setShowAboutModal] = useState(false);
 
     const metaplexRef = useRef(metaplex);
 
