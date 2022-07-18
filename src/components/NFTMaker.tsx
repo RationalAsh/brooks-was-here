@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Card, CardGroup, Col, Container, Form, Modal, Row, Spinner, Toast, ToastContainer } from 'react-bootstrap'
+import { Button, Card, CardGroup, Col, Container, Form, Modal, OverlayTrigger, Row, Spinner, Toast, ToastContainer, Tooltip } from 'react-bootstrap'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { Nft } from "@metaplex-foundation/js";
@@ -120,6 +120,14 @@ export default function NFTMaker({}: Props) {
         }
     }
 
+    const MintButtonTooltip = (props: any) => {
+        return (
+            <Tooltip id="minting-tooltip" {...props}>
+                Connect a wallet and enter a name to mint.
+            </Tooltip>
+        );
+    }
+
     return (
     <>
     <Container className="container-xs px-2 py-3">
@@ -137,16 +145,23 @@ export default function NFTMaker({}: Props) {
                                   required/>
                 </Col>
                 <Col xs lg="2">
+                    <OverlayTrigger placement='right'
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={MintButtonTooltip}>
+                    <span>
                     <Button variant="primary" size="lg" 
                             className={ isTextFocused ? "shadow-lg" : "shadow" }
                             onClick={createNFT}
-                            disabled={nftMessage.length === 0}>
+                            disabled={(nftMessage.length === 0) || (publicKey === null)}>
                         Mint!
                     </Button>
+                    </span>
+                    </OverlayTrigger>
                 </Col>
             </Row>
         </Form>
     </Container>
+
     {/* Place to display the messages that have been submitted so far. */}
     <Container fluid="md">
         <Row className="px-2 py-4 text-center">
