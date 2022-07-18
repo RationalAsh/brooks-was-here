@@ -4,6 +4,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { Nft } from "@metaplex-foundation/js";
 import { useMetaplex } from './useMetaplex';
+import NFTCard from './NFTCard';
 
 type Props = {}
 
@@ -94,32 +95,6 @@ export default function NFTMaker({}: Props) {
         setIsTextFocused(true);
     }
 
-    // Component to display a line of the NFT.
-    const NFTCardItem = ({props} : {props: any}) => {
-        if (props) {
-            return (
-                <Col xs='12' md='6' lg='4' className='py-3'>
-                <Card className="shadow">
-                    <Card.Img variant="top" src={props.external_url ? props.external_url : ""}/>
-                    <Card.Body>
-                        <Card.Title>{props.name ? props.name : "No Name"}</Card.Title>
-                        <Card.Text>
-                        {props.description ? props.description : "No descrption"}
-                        </Card.Text>
-                        <Button href={props.external_url ? props.external_url : ""}
-                                target="_blank" 
-                                variant="primary">
-                            Go to source
-                        </Button>
-                    </Card.Body>
-                </Card>
-                </Col>
-            )
-        } else {
-            return null
-        }
-    }
-
     const MintButtonTooltip = (props: any) => {
         return (
             <Tooltip id="minting-tooltip" {...props}>
@@ -171,7 +146,7 @@ export default function NFTMaker({}: Props) {
             {/* <CardGroup className='justify-content-md-center'> */}
             { walletNFTMetaData.length === 0 ?
                 (!publicKey ? "Connect a wallet to see your mints." : <Spinner animation="border"/>) :
-                walletNFTMetaData.map((nftItem, idx) => <NFTCardItem key={idx} props={nftItem}/>) }
+                walletNFTMetaData.map((nftItem, idx) => <NFTCard key={idx} nft={nftItem}/>) }
             {/* </CardGroup> */}
         </Row>
         <Row>
