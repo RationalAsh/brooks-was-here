@@ -27,6 +27,7 @@ export default function NFTMaker({}: Props) {
     const [mintingToast, setMintingToast] = useState(false);
     const [mintDoneToast, setMintDoneToast] = useState(false);
     const [showMintFailed, setShowMintFailedModal] = useState(false);
+    const [mintErrorString, setMintErrorString] = useState("");
     
 
     const metaplexRef = useRef(metaplex);
@@ -67,10 +68,11 @@ export default function NFTMaker({}: Props) {
                 setIsMinting(false);
                 setMintingToast(false);
                 setMintDoneToast(true);
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error);
                 setIsMinting(false);
                 setShowMintFailedModal(true);
+                setMintErrorString(error.toString());
             }
         }
     }
@@ -165,12 +167,16 @@ export default function NFTMaker({}: Props) {
                 </Toast.Header>
                 <Toast.Body>Mint Done!</Toast.Body>
             </Toast>
-            <Toast bg="danger" onClose={() => setShowMintFailedModal(false)} show={showMintFailed} delay={5000} autohide={true}>
+            <Toast bg="danger" onClose={() => setShowMintFailedModal(false)} show={showMintFailed}>
                 <Toast.Header>
                 <strong className="me-auto">Notification</strong>
                 <small className="text-muted">just now</small>
                 </Toast.Header>
-                <Toast.Body>Mint failed! Please try again.</Toast.Body>
+                <Toast.Body>
+                    Mint failed! Please try again.
+                    Error:
+                    {mintErrorString}
+                </Toast.Body>
             </Toast>
         </ToastContainer>
         </Row>
