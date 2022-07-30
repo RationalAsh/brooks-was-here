@@ -58,6 +58,12 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
             </Container>
             <p>
 
+            <p className='text-justify'>
+              You will also need some SOL in your testnet wallet. You can use  
+              a <a href='https://solfaucet.com' target='_blank'>Solana Faucet</a> to airdrop
+              yourself some SOL.
+            </p>
+
             </p>
             <p className='text-justify'>After changing your network, connect your phantom wallet, enter a name for your new NFT and click mint. The solana network sometimes 
             has issues with throughput and minting might fail. If that happens, try minting again. Sometimes, the transaction
