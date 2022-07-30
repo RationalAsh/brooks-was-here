@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Container, Modal, Navbar } from 'react-bootstrap';
+import { Button, Col, Container, Image, Modal, Navbar, Row } from 'react-bootstrap';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useState } from 'react';
 
@@ -36,8 +36,30 @@ const NavigationBar: React.FunctionComponent<INavigationBarProps> = (props) => {
             I built this app to learn how to work with React and the Solana blockchain.
             Find out more <a href='https://ashwinnarayan.com/' target='_blank'>about me on my website</a>.</p>
 
-            <h4> Minting Instructions </h4> 
-            <p className='text-justify'>Connect your phantom wallet, enter a name for your new NFT and click mint. The solana network sometimes 
+            <h4> Minting Instructions </h4>
+            <p className='text-justify'>
+              This app currently works on the Solana <a target="_blank" href="https://docs.solana.com/clusters">testnet </a> 
+               so you do not need to spend any money to test it out. However, to use it you need to change your wallet network
+               to testnet. 
+            </p>
+
+            <Container fluid="sm">
+              <Row>
+                <Col lg={4} sm={12}>
+                  <Image fluid rounded src="phantom-settings.png"/>
+                </Col>
+                <Col lg={4} sm={12}>
+                  <Image fluid rounded src="phantom-wallet-change-network.png"/>
+                </Col>
+                <Col lg={4} sm={12}>
+                  <Image fluid rounded src="phantom-wallet-network.png"/>
+                </Col>
+              </Row>
+            </Container>
+            <p>
+
+            </p>
+            <p className='text-justify'>After changing your network, connect your phantom wallet, enter a name for your new NFT and click mint. The solana network sometimes 
             has issues with throughput and minting might fail. If that happens, try minting again. Sometimes, the transaction
             times out and "fails". If this happens, please wait for a few minutes and reload the page or check your wallet to see if the NFT was minted.</p>
 
